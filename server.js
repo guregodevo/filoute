@@ -4,19 +4,23 @@ var http = require("http"),
     port = (process.argv[2] || 8888);
 
 http.createServer(function(request, response) {
-
-  var uri = url.parse(request.url, true).query.url;
+  var q = url.parse(request.url, true).query;
+  var uri = q.url;
+  var action = q.action;
+  if (!action) {
+     action = "render";
+  }
 
   if (uri) {
     //user told us their uri in the GET request, ex: http://localhost:8888/?url=http%3A%2F%2Fwww.example.com 
     console.log('Request at ' + new Date());
-    console.log('url ' + uri);
+    console.log(action + ' ' + uri);
     response.headers = {
      'Cache': 'no-cache',
      'Content-Type': 'text/html'
     };
   
-    phantom = spawn('phantomjs', ['--ssl-protocol=any','--load-images=false','render.js', uri]);
+    phantom = spawn('phantomjs', ['--ssl-protocol=any','--load-images=false',action+'.js', uri]);
 
     phantom.stdout.on('data', function (data) {
      response.write(data, "utf8");

@@ -4,8 +4,8 @@ var system = require('system'),
     page = new WebPage(),
     url = system.args[1],
     headers,
-    result,
-    redirectURL = null;
+    result
+    ;
 
 page.open(url, function (status) {
     if (status !== 'success') {

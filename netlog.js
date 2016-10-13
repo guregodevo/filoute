@@ -29,11 +29,7 @@ function createHAR(address, title, startTime, resources)
 {
     var entries = [];
     if (resources) {
-      console.log(resources.length);
       resources.forEach(function (resource) {
-        // for (i = 1; i < resources.length; i++) {
-        //var resource = resources[i];
-        console.log(resource);
         var request = resource.request,
             startReply = resource.startReply,
             endReply = resource.endReply;
@@ -46,9 +42,7 @@ function createHAR(address, title, startTime, resources)
         if (request.url && request.url.match(/(^data:image\/.*)/i)) {
             return;
 	}
-
         
-        console.log('entries' + resource.contentType);
         for (var i = 0; i < ajaxMimeType.length; i++) { 
           if (resource.contentType && resource.contentType.indexOf(ajaxMimeType[i]) > -1) {
             return;
@@ -92,7 +86,6 @@ function createHAR(address, title, startTime, resources)
         });
       });
     }
-    console.log(entries.length);
     return {
         log: {
             version: '1.2',
@@ -116,9 +109,6 @@ function createHAR(address, title, startTime, resources)
 
 
 page.onResourceRequested = function (req) {
-   if ((/http:\/\/.+?\.css/gi).test(req['url']) || req.headers['Content-Type'] == 'text/css') {
-        request.abort();
-   }
    rsces[req.id] = {
        request: req,
        startReply: null,
@@ -127,7 +117,6 @@ page.onResourceRequested = function (req) {
 };
 
 page.onResourceReceived = function (res) {
-   //console.log(stringify(res.headers, undefined, 4));
    //console.log('Response (#' + res.id + ', stage "' + res.stage + '"): ' + JSON.stringify(res)); 
    if (res.contentType) {
       rsces[res.id].contentType = res.contentType;
@@ -147,7 +136,7 @@ page.open(url, function (status) {
     } else {
       var startTime = new Date();
       var title = page.evaluate(function () {
-                return document.title;
+        return document.title;
       });
       har = createHAR(url, title, startTime, rsces);
       console.log(JSON.stringify(har, undefined, 4));            
